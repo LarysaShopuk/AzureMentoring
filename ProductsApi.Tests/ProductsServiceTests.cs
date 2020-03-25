@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using NUnit.Framework;
 using ProductAPI.Core;
 using ProductAPI.DAL.Interfaces;
 using ProductAPI.Services;
 using ProductAPI.Services.Interfaces;
-using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace ProductsApi.Tests
 {
-    [TestClass]
     [TestFixture]
     public class ProductsServiceTests
     {
