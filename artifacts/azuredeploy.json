@@ -1,211 +1,58 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "sites_products_api_v2_name": {
-            "defaultValue": "products-api-v2",
-            "type": "String"
-        },
-        "serverfarms_products_api_splan_name": {
-            "defaultValue": "products-api-splan",
-            "type": "String"
-        }
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "webAppName": {
+      "type": "string",
+      "metadata": {
+        "description": "Base name of the resource such as web app name and app service plan"
+      },
+      "minLength": 2
     },
-    "variables": {},
-    "resources": [
-        {
-            "type": "Microsoft.Web/serverfarms",
-            "apiVersion": "2018-02-01",
-            "name": "[parameters('serverfarms_products_api_splan_name')]",
-            "location": "South Central US",
-            "sku": {
-                "name": "S1",
-                "tier": "Standard",
-                "size": "S1",
-                "family": "S",
-                "capacity": 1
-            },
-            "kind": "app",
-            "properties": {
-                "perSiteScaling": false,
-                "maximumElasticWorkerCount": 1,
-                "isSpot": false,
-                "reserved": false,
-                "isXenon": false,
-                "hyperV": false,
-                "targetWorkerCount": 0,
-                "targetWorkerSizeId": 0
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites",
-            "apiVersion": "2018-11-01",
-            "name": "[parameters('sites_products_api_v2_name')]",
-            "location": "South Central US",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_products_api_splan_name'))]"
-            ],
-            "tags": {
-                "hidden-related:/subscriptions/bd660cc7-8ef2-4664-b624-34d5252e7abb/resourceGroups/adventure-works-rg1/providers/Microsoft.Web/serverfarms/products-api-splan": "empty"
-            },
-            "kind": "app",
-            "identity": {
-                "principalId": "e3096dcf-43ed-4a2b-87d0-a931317ee774",
-                "tenantId": "b41b72d0-4e9f-4c26-8a69-f949f367c91d",
-                "type": "SystemAssigned"
-            },
-            "properties": {
-                "enabled": true,
-                "hostNameSslStates": [
-                    {
-                        "name": "[concat(parameters('sites_products_api_v2_name'), '.azurewebsites.net')]",
-                        "sslState": "Disabled",
-                        "hostType": "Standard"
-                    },
-                    {
-                        "name": "[concat(parameters('sites_products_api_v2_name'), '.scm.azurewebsites.net')]",
-                        "sslState": "Disabled",
-                        "hostType": "Repository"
-                    }
-                ],
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_products_api_splan_name'))]",
-                "reserved": false,
-                "isXenon": false,
-                "hyperV": false,
-                "scmSiteAlsoStopped": false,
-                "clientAffinityEnabled": true,
-                "clientCertEnabled": false,
-                "hostNamesDisabled": false,
-                "containerSize": 0,
-                "dailyMemoryTimeQuota": 0,
-                "httpsOnly": true,
-                "redundancyMode": "None"
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/config",
-            "apiVersion": "2018-11-01",
-            "name": "[concat(parameters('sites_products_api_v2_name'), '/web')]",
-            "location": "South Central US",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_products_api_v2_name'))]"
-            ],
-            "tags": {
-                "hidden-related:/subscriptions/bd660cc7-8ef2-4664-b624-34d5252e7abb/resourceGroups/adventure-works-rg1/providers/Microsoft.Web/serverfarms/products-api-splan": "empty"
-            },
-            "properties": {
-                "numberOfWorkers": 1,
-                "defaultDocuments": [
-                    "Default.htm",
-                    "Default.html",
-                    "Default.asp",
-                    "index.htm",
-                    "index.html",
-                    "iisstart.htm",
-                    "default.aspx",
-                    "index.php",
-                    "hostingstart.html"
-                ],
-                "netFrameworkVersion": "v4.0",
-                "phpVersion": "5.6",
-                "requestTracingEnabled": false,
-                "remoteDebuggingEnabled": false,
-                "httpLoggingEnabled": false,
-                "logsDirectorySizeLimit": 35,
-                "detailedErrorLoggingEnabled": false,
-                "publishingUsername": "$products-api-v2",
-                "scmType": "VSTSRM",
-                "use32BitWorkerProcess": true,
-                "webSocketsEnabled": false,
-                "alwaysOn": false,
-                "managedPipelineMode": "Integrated",
-                "virtualApplications": [
-                    {
-                        "virtualPath": "/",
-                        "physicalPath": "site\\wwwroot",
-                        "preloadEnabled": false
-                    }
-                ],
-                "loadBalancing": "LeastRequests",
-                "experiments": {
-                    "rampUpRules": []
-                },
-                "autoHealEnabled": false,
-                "localMySqlEnabled": false,
-                "managedServiceIdentityId": 5244,
-                "ipSecurityRestrictions": [
-                    {
-                        "ipAddress": "Any",
-                        "action": "Allow",
-                        "priority": 1,
-                        "name": "Allow all",
-                        "description": "Allow all access"
-                    }
-                ],
-                "scmIpSecurityRestrictions": [
-                    {
-                        "ipAddress": "Any",
-                        "action": "Allow",
-                        "priority": 1,
-                        "name": "Allow all",
-                        "description": "Allow all access"
-                    }
-                ],
-                "scmIpSecurityRestrictionsUseMain": false,
-                "http20Enabled": false,
-                "minTlsVersion": "1.2",
-                "ftpsState": "AllAllowed",
-                "reservedInstanceCount": 0
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/deployments",
-            "apiVersion": "2018-11-01",
-            "name": "[concat(parameters('sites_products_api_v2_name'), '/19ad7b66-6122-4793-b932-cd591283ff77')]",
-            "location": "South Central US",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_products_api_v2_name'))]"
-            ],
-            "properties": {
-                "status": 4,
-                "author": "VSTS",
-                "deployer": "VSTS",
-                "message": "{\"type\":\"CDDeploymentConfiguration\",\"message\":\"Successfully set up continuous delivery and triggered deployment to Azure Web App.\",\"VSTSRM_BuildDefinitionWebAccessUrl\":\"https://dev.azure.com/LarysaShopuk/829b5fba-2da1-4cae-98d4-8080ed756df5/_build?_a=simple-process&definitionId=8\",\"VSTSRM_ConfiguredCDEndPoint\":\"https://dev.azure.com/LarysaShopuk/829b5fba-2da1-4cae-98d4-8080ed756df5/_apps/hub/ms.vss-releaseManagement-web.hub-explorer?definitionId=4\",\"VSTSRM_BuildWebAccessUrl\":\"https://dev.azure.com/LarysaShopuk/829b5fba-2da1-4cae-98d4-8080ed756df5/_build?_a=summary&buildId=32\"}",
-                "start_time": "2020-03-30T15:39:10.6803139Z",
-                "end_time": "2020-03-30T15:39:10.6803139Z",
-                "active": false
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/deployments",
-            "apiVersion": "2018-11-01",
-            "name": "[concat(parameters('sites_products_api_v2_name'), '/211585582980572')]",
-            "location": "South Central US",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_products_api_v2_name'))]"
-            ],
-            "properties": {
-                "status": 4,
-                "author": "Larysa Shopuk",
-                "deployer": "VSTS",
-                "message": "{\"type\":\"Deployment\",\"commitId\":\"afd78a4e52b0b497f505d498f4bbb2e7a9ca2d2a\",\"buildId\":\"32\",\"releaseId\":\"21\",\"buildNumber\":\"20200330.1\",\"releaseName\":\"Release-1\",\"repoProvider\":\"GitHub\",\"repoName\":\"LarysaShopuk/AzureMentoring\",\"collectionUrl\":\"https://dev.azure.com/LarysaShopuk/\",\"teamProject\":\"829b5fba-2da1-4cae-98d4-8080ed756df5\",\"buildProjectUrl\":\"https://dev.azure.com/LarysaShopuk/829b5fba-2da1-4cae-98d4-8080ed756df5\",\"repositoryUrl\":\"\",\"branch\":\"master\",\"teamProjectName\":\"ProductsAPI\",\"slotName\":\"production\"}",
-                "start_time": "2020-03-30T15:43:02.0452264Z",
-                "end_time": "2020-03-30T15:43:02.0452264Z",
-                "active": true
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/hostNameBindings",
-            "apiVersion": "2018-11-01",
-            "name": "[concat(parameters('sites_products_api_v2_name'), '/', parameters('sites_products_api_v2_name'), '.azurewebsites.net')]",
-            "location": "South Central US",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_products_api_v2_name'))]"
-            ],
-            "properties": {
-                "siteName": "products-api-v2",
-                "hostNameType": "Verified"
-            }
-        }
-    ]
+    "sku":{
+      "type": "string",
+      "defaultValue" : "S1",
+      "metadata": {
+        "description": "The SKU of App Service Plan, by default is Standard S1"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources"
+      }
+    }
+  },
+  "variables": {
+    "webAppPortalName": "[concat(parameters('webAppName'), '-webapp')]",
+    "appServicePlanName": "[concat('AppServicePlan-', parameters('webAppName'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-02-01",
+      "type": "Microsoft.Web/serverfarms",
+      "kind": "app",
+      "name": "[variables('appServicePlanName')]",
+      "location": "[parameters('location')]",
+      "properties": {},
+      "dependsOn": [],
+      "sku": {
+        "name": "[parameters('sku')]"
+      }
+    },
+    {
+      "apiVersion": "2018-11-01",
+      "type": "Microsoft.Web/sites",
+      "kind": "app",
+      "name": "[variables('webAppPortalName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+      ]
+    }
+  ]
 }

@@ -1,12 +1,10 @@
+  
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "sites_products_api_v2_name": {
-            "value": "products_api_v2_staging"
-        },
-        "serverfarms_products_api_splan_name": {
-            "value": "products_api_splan_staging"
-        }
-    }
-}
+	"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {	
+		"webAppName": {
+			"value": "products-api-staging"
+		  }
+     }
+  }
